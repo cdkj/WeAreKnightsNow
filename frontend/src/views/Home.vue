@@ -73,7 +73,7 @@
                 <div class="flag-label">{{ position.message.length > 15 ? position.message.substring(0, 15) + '...' : position.message }}</div>
                 
                 <!-- Commit信息提示框 -->
-                <div v-if="currentCommit?.hash === position.hash" class="commit-info-tooltip">
+                <div v-if="currentCommit?.hash === position.hash && isAnimating" class="commit-info-tooltip">
                   <div class="tooltip-header">
                     <span class="commit-hash">{{ position.hash.substring(0, 8) }}</span>
                     <span v-if="formatTime(position.time)" class="commit-time">{{ formatTime(position.time) }}</span>
@@ -259,11 +259,33 @@ const generateStarmapLayout = () => {
     const totalBlankArea = 0.3 // 30%的屏幕面积
     const avgBlankAreaPerZone = totalBlankArea / numBlankZones
     
-    // 生成随机留白区域
+    // 生成随机留白区域（位于边缘）
     for (let i = 0; i < numBlankZones; i++) {
-      // 随机位置（避免边缘）
-      const centerX = 0.15 + Math.random() * 0.7 // 15%-85%
-      const centerY = 0.15 + Math.random() * 0.7 // 15%-85%
+      // 随机选择边缘位置：上、下、左、右
+      const edge = Math.floor(Math.random() * 4) // 0=上, 1=右, 2=下, 3=左
+      let centerX, centerY
+      
+      switch (edge) {
+        case 0: // 上边缘
+          centerX = 0.1 + Math.random() * 0.8 // 10%-90%
+          centerY = 0.05 + Math.random() * 0.15 // 5%-20%
+          break
+        case 1: // 右边缘
+          centerX = 0.8 + Math.random() * 0.15 // 80%-95%
+          centerY = 0.1 + Math.random() * 0.8 // 10%-90%
+          break
+        case 2: // 下边缘
+          centerX = 0.1 + Math.random() * 0.8 // 10%-90%
+          centerY = 0.8 + Math.random() * 0.15 // 80%-95%
+          break
+        case 3: // 左边缘
+          centerX = 0.05 + Math.random() * 0.15 // 5%-20%
+          centerY = 0.1 + Math.random() * 0.8 // 10%-90%
+          break
+        default:
+          centerX = 0.1
+          centerY = 0.1
+      }
       
       // 根据面积计算半径（椭圆面积 = π * radiusX * radiusY）
       const baseRadius = Math.sqrt(avgBlankAreaPerZone / Math.PI)
@@ -881,7 +903,7 @@ const moveToCommitAndPlantFlag = (targetPos: any) => {
     Math.pow(targetPos.x - explorer.value.x, 2) + 
     Math.pow(targetPos.y - explorer.value.y, 2)
   )
-  const moveTime = Math.max(1200, Math.min(2400, distance * 4)) // 大幅放慢奔跑速度，让卡片有更多时间显示
+  const moveTime = Math.max(1200, Math.min(2400, distance * 3)) // 大幅放慢奔跑速度，让卡片有更多时间显示
   
   // 开始移动动画，路过时插旗
   animateExplorerMovement(targetPos, moveTime, onMovementComplete)
@@ -915,8 +937,8 @@ const animateExplorerMovement = (targetPos: any, duration: number, callback: () 
     explorer.value.x = startX + deltaX * easeProgress
     explorer.value.y = startY + deltaY * easeProgress + runningBounce
     
-    // 相机实时跟随骑士位置
-    focusCamera(explorer.value.x, explorer.value.y, 1.8, 100)
+    // 相机实时跟随骑士位置 - 增加持续时间提高同步性
+    focusCamera(explorer.value.x, explorer.value.y, 1.8, 300)
     
     // 当开始移动时（10%进度）就开始绘制线条，跟随骑士脚步
     if (!lineStarted && progress >= 0.1 && currentCommitIndex.value > 0) {
