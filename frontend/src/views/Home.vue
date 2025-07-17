@@ -357,7 +357,7 @@ const generateStarmapLayout = () => {
       let attempts = 0
       let placedInZone = 0
       
-      while (placedInZone < zonePoints && attempts < zonePoints * 20) {
+      while (placedInZone < zonePoints && attempts < zonePoints * 30) {
         attempts++
         
         // 在区域边界内生成随机点
@@ -368,7 +368,7 @@ const generateStarmapLayout = () => {
         if (isPointInExplorationBounds(x, y, zone) && !isPointInBlankZone(x, y)) {
           // 检查与已有点的最小距离
           let validPlacement = true
-          const minDist = 120 // 最小距离
+          const minDist = 100 // 减少最小距离要求
           
           for (const existingPoint of points) {
             const dist = Math.sqrt(Math.pow(x - existingPoint.x, 2) + Math.pow(y - existingPoint.y, 2))
@@ -389,7 +389,7 @@ const generateStarmapLayout = () => {
     
     // 如果还有剩余点，随机分布在可用区域（避开留白区域）
     let attempts = 0
-    while (remainingPoints > 0 && attempts < remainingPoints * 30) {
+    while (remainingPoints > 0 && attempts < remainingPoints * 50) {
       attempts++
       
       const x = margin + Math.random() * (containerWidth - 2 * margin)
@@ -399,7 +399,7 @@ const generateStarmapLayout = () => {
       if (!isPointInBlankZone(x, y)) {
         // 检查最小距离
         let validPlacement = true
-        const minDist = 120 // 保持较大的最小距离
+        const minDist = 100 // 减少最小距离要求
         
         for (const existingPoint of points) {
           const dist = Math.sqrt(Math.pow(x - existingPoint.x, 2) + Math.pow(y - existingPoint.y, 2))
@@ -420,7 +420,7 @@ const generateStarmapLayout = () => {
     if (remainingPoints > 0) {
       console.warn(`⚠️ 降低距离要求，继续生成剩余的 ${remainingPoints} 个点`)
       attempts = 0
-      while (remainingPoints > 0 && attempts < remainingPoints * 40) {
+      while (remainingPoints > 0 && attempts < remainingPoints * 60) {
         attempts++
         
         const x = margin + Math.random() * (containerWidth - 2 * margin)
@@ -430,7 +430,7 @@ const generateStarmapLayout = () => {
         if (!isPointInBlankZone(x, y)) {
           // 检查最小距离（降低要求）
           let validPlacement = true
-          const minDist = Math.max(60, 120 - attempts * 0.8) // 逐渐降低最小距离，但保持更大的最小值
+          const minDist = Math.max(40, 100 - attempts * 1.2) // 更快降低最小距离，最小值降到40
         
           for (const existingPoint of points) {
             const dist = Math.sqrt(Math.pow(x - existingPoint.x, 2) + Math.pow(y - existingPoint.y, 2))
@@ -566,13 +566,18 @@ const generateStarmapLayout = () => {
     let candidatePoints = generateCandidatePoints(totalCommits)
     
     // 如果生成的点数不足，补充随机点
-    while (candidatePoints.length < totalCommits) {
+    let supplementAttempts = 0
+    const maxSupplementAttempts = (totalCommits - candidatePoints.length) * 100
+    
+    while (candidatePoints.length < totalCommits && supplementAttempts < maxSupplementAttempts) {
+      supplementAttempts++
       const x = 80 + Math.random() * (containerWidth - 160)
       const y = 80 + Math.random() * (containerHeight - 160)
       
-      // 检查与已有点的最小距离
+      // 检查与已有点的最小距离，逐渐降低要求
       let validPlacement = true
-      const minDist = 100 // 保持较大的最小距离要求，增加留白
+      const baseMinDist = 80
+      const minDist = Math.max(30, baseMinDist - supplementAttempts * 0.5) // 逐渐降低最小距离
       
       for (const existingPoint of candidatePoints) {
         const dist = Math.sqrt(Math.pow(x - existingPoint.x, 2) + Math.pow(y - existingPoint.y, 2))
@@ -585,28 +590,70 @@ const generateStarmapLayout = () => {
       if (validPlacement) {
         candidatePoints.push({ x, y })
       }
-      
-      // 防止无限循环
-      if (candidatePoints.length === totalCommits) break
     }
     
     console.log(`🗺️ 最终生成了 ${candidatePoints.length} 个点，需要 ${totalCommits} 个`)
     
-    // 如果点数仍然不足，直接使用网格布局作为后备
+    // 如果点数仍然不足，使用混合策略：保留已有点，补充网格点
     if (candidatePoints.length < totalCommits) {
-      console.warn('⚠️ 有机分布点数不足，使用网格布局作为后备')
-      candidatePoints = []
-      const cols = Math.ceil(Math.sqrt(totalCommits))
-      const rows = Math.ceil(totalCommits / cols)
-      const cellWidth = (containerWidth - 160) / cols
-      const cellHeight = (containerHeight - 160) / rows
+      console.warn(`⚠️ 有机分布点数不足，已生成 ${candidatePoints.length}/${totalCommits} 个点，使用网格布局补充剩余点`)
       
-      for (let i = 0; i < totalCommits; i++) {
-        const col = i % cols
-        const row = Math.floor(i / cols)
-        const x = 80 + col * cellWidth + cellWidth / 2 + (Math.random() - 0.5) * cellWidth * 0.3
-        const y = 80 + row * cellHeight + cellHeight / 2 + (Math.random() - 0.5) * cellHeight * 0.3
-        candidatePoints.push({ x, y })
+      const remainingCount = totalCommits - candidatePoints.length
+      const cols = Math.ceil(Math.sqrt(remainingCount))
+      const rows = Math.ceil(remainingCount / cols)
+      
+      // 计算可用区域，避开已有点
+      const margin = 80
+      const availableWidth = containerWidth - 2 * margin
+      const availableHeight = containerHeight - 2 * margin
+      
+      // 为剩余点生成网格位置
+      for (let i = 0; i < remainingCount; i++) {
+        let placed = false
+        let attempts = 0
+        
+        while (!placed && attempts < 50) {
+          attempts++
+          const col = i % cols
+          const row = Math.floor(i / cols)
+          const cellWidth = availableWidth / cols
+          const cellHeight = availableHeight / rows
+          
+          // 在网格单元内随机偏移
+          const offsetX = (Math.random() - 0.5) * cellWidth * 0.6
+          const offsetY = (Math.random() - 0.5) * cellHeight * 0.6
+          
+          const x = margin + col * cellWidth + cellWidth / 2 + offsetX
+          const y = margin + row * cellHeight + cellHeight / 2 + offsetY
+          
+          // 检查与已有点的距离
+          let validPlacement = true
+          const minDist = Math.max(20, 60 - attempts) // 逐渐降低距离要求
+          
+          for (const existingPoint of candidatePoints) {
+            const dist = Math.sqrt(Math.pow(x - existingPoint.x, 2) + Math.pow(y - existingPoint.y, 2))
+            if (dist < minDist) {
+              validPlacement = false
+              break
+            }
+          }
+          
+          if (validPlacement) {
+            candidatePoints.push({ x, y })
+            placed = true
+          }
+        }
+        
+        // 如果仍然无法放置，强制放置在网格位置
+        if (!placed) {
+          const col = i % cols
+          const row = Math.floor(i / cols)
+          const cellWidth = availableWidth / cols
+          const cellHeight = availableHeight / rows
+          const x = margin + col * cellWidth + cellWidth / 2
+          const y = margin + row * cellHeight + cellHeight / 2
+          candidatePoints.push({ x, y })
+        }
       }
     }
     
