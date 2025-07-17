@@ -311,7 +311,7 @@ const generateStarmapLayout = () => {
       }
     }
     
-    console.log(`🎯 生成了 ${blankZones.length} 个留白区域:`, blankZones)
+
     
     // 定义探索区域（屏幕的70%，分布在留白区域之外）
     const distributionZones = [
@@ -470,7 +470,7 @@ const generateStarmapLayout = () => {
       }
     }
     
-    console.log(`🗺️ 生成了 ${points.length} 个分布点，目标 ${numPoints} 个`)
+
     return points
   }
   
@@ -614,11 +614,11 @@ const generateStarmapLayout = () => {
       }
     }
     
-    console.log(`🗺️ 最终生成了 ${candidatePoints.length} 个点，需要 ${totalCommits} 个`)
+
     
     // 如果点数仍然不足，使用混合策略：保留已有点，补充网格点
     if (candidatePoints.length < totalCommits) {
-      console.warn(`⚠️ 有机分布点数不足，已生成 ${candidatePoints.length}/${totalCommits} 个点，使用网格布局补充剩余点`)
+
       
       const remainingCount = totalCommits - candidatePoints.length
       const cols = Math.ceil(Math.sqrt(remainingCount))
@@ -745,14 +745,6 @@ const focusCamera = (targetX: number, targetY: number, targetScale: number = 1.8
   if (deltaX < 2 && deltaY < 2 && deltaScale < 0.01) {
     return
   }
-  
-  console.log('📷 相机聚焦参数:', {
-    目标位置: { x: targetX, y: targetY },
-    缩放倍数: targetScale,
-    变化量: { deltaX: deltaX.toFixed(2), deltaY: deltaY.toFixed(2), deltaScale: deltaScale.toFixed(3) },
-    持续时间: duration
-  })
-  
   cameraTransition.value = true
   
   // 使用CSS动画实现平滑过渡
@@ -790,8 +782,7 @@ const resetCamera = (duration: number = 1000) => {
   if (starmap) {
     starmap.style.transition = `transform ${duration}ms cubic-bezier(0.4, 0, 0.2, 1)`
     starmap.style.transform = 'scale(1) translate(0px, 0px)'
-    
-    console.log('📷 重置相机到全景视图')
+
   }
   
   // 更新相机状态
@@ -937,8 +928,8 @@ const animateExplorerMovement = (targetPos: any, duration: number, callback: () 
     explorer.value.x = startX + deltaX * easeProgress
     explorer.value.y = startY + deltaY * easeProgress + runningBounce
     
-    // 相机实时跟随骑士位置 - 增加持续时间提高同步性
-    focusCamera(explorer.value.x, explorer.value.y, 1.8, 300)
+    // 相机实时跟随骑士位置
+    focusCamera(explorer.value.x, explorer.value.y, 1.8, 100)
     
     // 当开始移动时（10%进度）就开始绘制线条，跟随骑士脚步
     if (!lineStarted && progress >= 0.1 && currentCommitIndex.value > 0) {
@@ -985,22 +976,6 @@ const plantFlagAtPositionWithoutLine = (targetPos: any) => {
   setTimeout(() => {
     fadeInCommitCard()
   }, 200)
-  
-  // 输出当前卡片信息到控制台
-  console.log('🚩 探险者路过并插旗:', {
-    索引: currentCommitIndex.value + 1,
-    总数: commitPositions.value.length,
-    提交哈希: targetPos.hash,
-    短哈希: targetPos.hash?.substring(0, 8),
-    作者: targetPos.author,
-    邮箱: targetPos.email,
-    时间: targetPos.time,
-    格式化时间: formatTime(targetPos.time),
-    提交信息: targetPos.message,
-    分支: targetPos.branch || 'main',
-    分支颜色: targetPos.branchColor,
-    位置: { x: targetPos.x, y: targetPos.y }
-  })
   
   // 延迟开始当前位置的陆地边界消失动画，传入正确的索引
   const currentIndex = currentCommitIndex.value // 保存当前索引
@@ -1091,7 +1066,6 @@ const fadeOutCurrentLandBoundary = (commitIndex: number) => {
   const currentBoundary = connectionSvg.value.querySelector(`path.land-boundary[data-commit-index="${commitIndex}"]`)
   
   if (currentBoundary) {
-    console.log('🌍 开始陆地边界消失动画，索引:', commitIndex)
     // 延迟开始消失动画，让边界显示更长时间
     setTimeout(() => {
       // 添加CSS过渡效果
@@ -1102,7 +1076,6 @@ const fadeOutCurrentLandBoundary = (commitIndex: number) => {
       setTimeout(() => {
         if (currentBoundary.parentNode) {
           currentBoundary.parentNode.removeChild(currentBoundary)
-          console.log('🌍 陆地边界已移除，索引:', commitIndex)
         }
       }, 1200) // 与过渡时间匹配
     }, 1000) // 延迟1秒开始消失，让用户有时间观看
@@ -1177,14 +1150,12 @@ const cleanupVisualEffects = () => {
 const fadeOutCommitCard = () => {
   const cardElement = document.querySelector('.current-commit-info')
   if (cardElement) {
-    console.log('💳 开始卡片延迟消失动画')
     // 延迟开始消失动画，让卡片显示更长时间，配合更慢的骑士移动速度
     setTimeout(() => {
       cardElement.classList.remove('show')
       // 等待CSS过渡完成后清除currentCommit
       setTimeout(() => {
         currentCommit.value = null
-        console.log('💳 卡片已完全消失')
       }, 300) // 与CSS过渡时间匹配
     }, 2000) // 延迟2秒开始消失，给卡片更多显示时间
   } else {
@@ -1526,11 +1497,6 @@ const startStarmapAnimation = () => {
   // 隐藏卡片
   fadeOutCommitCard()
   
-  // 先聚焦到骑士当前位置
-  console.log('🎬 开始动画，聚焦到骑士位置:', {
-    x: explorer.value.x,
-    y: explorer.value.y
-  })
   focusCamera(explorer.value.x, explorer.value.y, 1.8, 1000)
   
   // 延迟开始动画，等待相机聚焦完成
@@ -1570,11 +1536,6 @@ const initializeExplorer = () => {
     explorer.value.isJumping = false
     explorer.value.currentTarget = -1
     
-    console.log('🏇 初始化骑士位置:', {
-      x: explorer.value.x,
-      y: explorer.value.y,
-      firstCommit: firstCommit
-    })
   }
   
   // 确保卡片初始状态为隐藏
@@ -1583,31 +1544,7 @@ const initializeExplorer = () => {
   // 聚焦到骑士位置
   setTimeout(() => {
     if (commitPositions.value.length > 0) {
-      console.log('📷 相机聚焦到骑士位置:', {
-        x: explorer.value.x,
-        y: explorer.value.y,
-        容器尺寸: {
-          width: starmapContainer.value?.clientWidth,
-          height: starmapContainer.value?.clientHeight
-        }
-      })
-      
       // 添加骑士元素的实际DOM位置检查
-      const explorerElement = document.querySelector('.explorer-on-horse')
-      if (explorerElement) {
-        const rect = explorerElement.getBoundingClientRect()
-        console.log('🏇 骑士DOM元素位置:', {
-          left: explorerElement.style.left,
-          top: explorerElement.style.top,
-          boundingRect: {
-            x: rect.x,
-            y: rect.y,
-            width: rect.width,
-            height: rect.height
-          }
-        })
-      }
-      
       focusCamera(explorer.value.x, explorer.value.y, 1.8)
     }
   }, 500)
