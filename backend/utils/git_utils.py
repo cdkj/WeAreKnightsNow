@@ -33,7 +33,7 @@ class GitRepository:
         """
         cmd = [
             'git', 'log', '--all', '--graph',
-            '--pretty=format:%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset',
+            '--pretty=format:%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%ci) %C(bold blue)<%an>%Creset',
             '--abbrev-commit'
         ]
         
@@ -119,7 +119,7 @@ class GitLogParser:
     
     def parse(self, git_log_output: str) -> List[Dict[str, Any]]:
         """
-        解析git log输出
+        解析git log输出，过滤掉无意义的纯图形行
         """
         if not git_log_output.strip():
             return []
@@ -132,7 +132,8 @@ class GitLogParser:
                 continue
             
             commit_info = self._parse_commit_line(line, line_num)
-            if commit_info:
+            # 只保留真正的提交信息，过滤掉纯图形行
+            if commit_info and not commit_info.get('is_graph_only', False):
                 commits.append(commit_info)
         
         return commits
@@ -161,8 +162,10 @@ class GitLogParser:
                 'raw_line': line
             }
         
-        # 如果不匹配提交格式，可能是纯图形行
-        if re.match(r'^[*|\\\/ ]+$', clean_line.strip()):
+        # 如果不匹配提交格式，检查是否为纯图形行
+        # 纯图形行只包含空格、*、|、\、/ 等字符，且不包含提交哈希
+        stripped_line = clean_line.strip()
+        if stripped_line and re.match(r'^[*|\\/ ]+$', stripped_line) and not re.search(r'[a-f0-9]{6,}', stripped_line):
             return {
                 'line_number': line_num,
                 'graph': clean_line.rstrip(),
