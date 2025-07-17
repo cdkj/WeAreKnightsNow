@@ -1,270 +1,135 @@
-# Git 提交历史可视化项目
+# 现在我们是骑士啦 (WeAreKnightsNow) 🌟
 
-一个完整的 Git 提交历史可视化解决方案，包含 Python Flask 后端和 Vue.js + D3.js 前端，将您的 Git 仓库历史转化为美丽的时间轴动画。
+一个将 Git 提交历史转化为沉浸式星空地图探险的可视化工具。化身为勇敢的骑士，踏上代码演进的冒险之旅，在星空下见证每一次提交的足迹。
 
-## 🎯 项目概述
-
-这个项目旨在为开发者提供一个直观、美观的方式来查看和分析 Git 仓库的提交历史。通过时间轴动画，您可以：
-
-- 📈 观察项目的发展历程
-- 👥 了解团队成员的贡献情况
-- 🌳 可视化分支的创建和合并
-- 🎬 以动画形式重现开发过程
-- 📊 获取详细的统计信息
-
-## 🏗️ 项目结构
-
-```
-git-to-graph/
-├── backend/                 # Python Flask 后端
-│   ├── app.py              # Flask 应用主文件
-│   ├── config.py           # 配置管理
-│   ├── run.py              # 启动脚本
-│   ├── requirements.txt    # Python 依赖
-│   ├── test_api.py         # API 测试脚本
-│   ├── utils/              # 工具模块
-│   │   ├── __init__.py
-│   │   └── git_utils.py    # Git 操作工具
-│   └── README.md           # 后端文档
-├── frontend/               # Vue.js + D3.js 前端
-│   ├── src/
-│   │   ├── components/     # Vue 组件
-│   │   ├── views/          # 页面组件
-│   │   ├── stores/         # Pinia 状态管理
-│   │   ├── router/         # 路由配置
-│   │   ├── styles/         # 样式文件
-│   │   └── main.ts         # 应用入口
-│   ├── package.json        # 前端依赖
-│   └── README.md           # 前端文档
-└── README.md               # 项目总览（本文件）
-```
+![Git to Graph](https://img.shields.io/badge/Git-Visualization-blue)
+![Vue 3](https://img.shields.io/badge/Vue-3.x-green)
+![Flask](https://img.shields.io/badge/Flask-Python-red)
+![TypeScript](https://img.shields.io/badge/TypeScript-Ready-blue)
 
 ## ✨ 功能特性
 
-### 后端功能
-- 🔍 Git 仓库信息获取
-- 📝 提交历史解析
-- 📊 统计数据计算
-- 🌐 RESTful API 接口
-- ⚡ 高性能数据处理
-- 🛡️ 错误处理和验证
+### 🎮 沉浸式体验
+- **星空地图探险**：将Git提交历史转换为美丽的星空地图
+- **骑士探险动画**：可爱的骑士角色带您穿越代码历史
+- **九曲山路十八弯**：优美的弯曲连线，展现提交之间的关系
+- **实时相机跟随**：相机智能跟随骑士移动，确保最佳观看体验
 
-### 前端功能
-- 🎬 时间轴动画播放
-- 🎨 现代化 UI 设计
-- 📱 响应式布局
-- 🎛️ 动画控制面板
-- 🔍 提交详情查看
-- 📈 实时统计展示
+### 📊 数据可视化
+- **提交节点可视化**：每个提交都是星空中的一颗星
+- **分支颜色区分**：不同分支使用不同颜色标识
+- **时间轴布局**：按时间顺序智能排列提交节点
+- **详细信息卡片**：悬停查看提交详情（作者、时间、消息等）
+
+### 🎨 视觉效果
+- **动态星空背景**：闪烁的星星营造宇宙氛围
+- **平滑动画过渡**：所有交互都有优雅的动画效果
+- **响应式设计**：适配各种屏幕尺寸
+- **现代UI设计**：简洁美观的用户界面
+
+## 🛠️ 技术栈
+
+### 前端
+- **Vue 3** - 现代化的前端框架
+- **TypeScript** - 类型安全的JavaScript
+- **Vite** - 快速的构建工具
+- **D3.js** - 强大的数据可视化库
+- **Element Plus** - 优雅的UI组件库
+- **Pinia** - 状态管理
+- **SCSS** - CSS预处理器
+
+### 后端
+- **Flask** - 轻量级Python Web框架
+- **Flask-CORS** - 跨域资源共享支持
+- **Git** - 版本控制系统集成
 
 ## 🚀 快速开始
 
 ### 环境要求
+- Node.js 18+
+- Python 3.8+
+- Git
 
-- **后端**: Python 3.7+
-- **前端**: Node.js 16+
-- **Git**: 已安装并可在命令行使用
+### 安装步骤
 
-### 1. 启动后端服务
-
+1. **克隆项目**
 ```bash
-# 进入后端目录
+git clone <repository-url>
+cd git-to-graph
+```
+
+2. **启动后端服务**
+```bash
 cd backend
-
-# 安装依赖
 pip install -r requirements.txt
-
-# 启动服务
 python run.py
 ```
 
-后端服务将在 `http://localhost:5000` 启动
-
-### 2. 启动前端应用
-
+3. **启动前端服务**
 ```bash
-# 进入前端目录
 cd frontend
-
-# 安装依赖
 npm install
-
-# 启动开发服务器
 npm run dev
 ```
 
-前端应用将在 `http://localhost:5173` 启动
+4. **访问应用**
+打开浏览器访问 `http://localhost:5173`
 
-### 3. 使用应用
+## 📖 使用指南
 
-1. 在浏览器中打开 `http://localhost:5173`
-2. 输入您的 Git 仓库本地路径
-3. 设置最大提交数量（可选）
-4. 点击"开始可视化"按钮
-5. 享受美丽的时间轴动画！
+1. **输入仓库路径**：在首页输入您的Git仓库本地路径
+2. **开始探险**：点击"开始探险"按钮
+3. **观看动画**：欣赏骑士在星空地图中的探险之旅
+4. **查看详情**：点击提交节点查看详细信息
+5. **控制播放**：使用控制面板暂停、继续或重置动画
 
-## 🎨 可视化效果
+## 🎯 项目愿景
 
-### 提交节点
-- **🔵 普通提交**: 日常代码提交
-- **🟢 合并提交**: 分支合并操作
-- **🟡 功能提交**: 新功能开发
-- **🔴 修复提交**: Bug 修复
+**现在我们是骑士啦！** 这不仅仅是一个代码可视化工具，更是一次穿越时空的冒险。我们相信，每一次提交都是骑士在代码王国中留下的英勇足迹，每一个分支都是通往未知领域的征途。让我们披上代码的铠甲，骑上算法的战马，在Git的星空下书写属于我们的传奇！
 
-### 动画特效
-- 按时间顺序逐个显示提交
-- 平滑的节点出现动画
-- 连接线动态绘制
-- 可调节播放速度
+## 🎯 项目亮点
 
-### 交互功能
-- 点击节点查看提交详情
-- 悬停效果和工具提示
-- 播放/暂停/重置控制
-- 进度条显示
+- **创新的可视化方式**：将枯燥的Git历史转换为有趣的探险游戏
+- **优秀的用户体验**：流畅的动画和直观的交互设计
+- **高性能渲染**：使用D3.js和Canvas优化大量数据的渲染
+- **可扩展架构**：模块化设计，易于扩展新功能
 
-## 🔧 配置说明
+## 📁 项目结构
 
-### 后端配置
-
-在 `backend/config.py` 中可以调整：
-
-```python
-class Config:
-    # Flask 配置
-    DEBUG = True
-    
-    # 服务器配置
-    HOST = '0.0.0.0'
-    PORT = 5000
-    
-    # Git 配置
-    MAX_COMMITS = 1000
-    GIT_TIMEOUT = 30
 ```
-
-### 前端配置
-
-在 `frontend/src/stores/git.ts` 中可以修改 API 地址：
-
-```typescript
-const API_BASE_URL = 'http://localhost:5000/api'
-```
-
-## 📊 API 接口
-
-### 健康检查
-```
-GET /api/health
-```
-
-### 获取 Git 日志
-```
-GET /api/git-log?repo_path=<path>&max_count=<number>
-```
-
-### 获取仓库信息
-```
-GET /api/repository-info?repo_path=<path>
-```
-
-详细的 API 文档请参考 [backend/README.md](backend/README.md)
-
-## 🐛 故障排除
-
-### 常见问题
-
-1. **后端启动失败**
-   - 检查 Python 版本和依赖安装
-   - 确保端口 5000 未被占用
-   - 查看控制台错误信息
-
-2. **前端无法连接后端**
-   - 确保后端服务已启动
-   - 检查防火墙设置
-   - 验证 API 地址配置
-
-3. **Git 仓库无法识别**
-   - 确保路径指向有效的 Git 仓库
-   - 检查文件系统权限
-   - 验证 Git 命令可用性
-
-4. **动画性能问题**
-   - 减少提交数量限制
-   - 降低动画播放速度
-   - 使用现代浏览器
-
-### 调试技巧
-
-- 查看浏览器开发者工具的控制台
-- 检查网络请求状态
-- 使用后端测试脚本验证 API
-- 查看后端日志输出
-
-## 🛠️ 开发指南
-
-### 后端开发
-
-```bash
-# 运行测试
-python test_api.py
-
-# 开发模式启动
-FLASK_ENV=development python run.py
-```
-
-### 前端开发
-
-```bash
-# 类型检查
-npm run type-check
-
-# 代码检查
-npm run lint
-
-# 构建生产版本
-npm run build
+git-to-graph/
+├── frontend/          # Vue 3 前端应用
+│   ├── src/
+│   │   ├── views/     # 页面组件
+│   │   ├── stores/    # 状态管理
+│   │   └── styles/    # 样式文件
+│   └── package.json
+├── backend/           # Flask 后端API
+│   ├── utils/         # 工具函数
+│   ├── app.py         # 主应用文件
+│   └── requirements.txt
+└── README.md
 ```
 
 ## 🤝 贡献指南
 
-我们欢迎任何形式的贡献！
+欢迎提交Issue和Pull Request！
 
 1. Fork 项目
-2. 创建功能分支 (`git checkout -b feature/AmazingFeature`)
+2. 创建特性分支 (`git checkout -b feature/AmazingFeature`)
 3. 提交更改 (`git commit -m 'Add some AmazingFeature'`)
 4. 推送到分支 (`git push origin feature/AmazingFeature`)
-5. 开启 Pull Request
-
-### 开发规范
-
-- 遵循现有代码风格
-- 添加适当的注释和文档
-- 确保测试通过
-- 更新相关文档
+5. 打开Pull Request
 
 ## 📄 许可证
 
-MIT License - 详见 [LICENSE](LICENSE) 文件
+本项目采用 MIT 许可证 - 查看 [LICENSE](LICENSE) 文件了解详情。
 
 ## 🙏 致谢
 
-感谢以下开源项目的支持：
-
-- [Flask](https://flask.palletsprojects.com/) - Python Web 框架
-- [Vue.js](https://vuejs.org/) - 渐进式 JavaScript 框架
-- [D3.js](https://d3js.org/) - 数据驱动的文档
-- [Element Plus](https://element-plus.org/) - Vue 3 组件库
-- [Vite](https://vitejs.dev/) - 下一代前端构建工具
-
-## 📞 联系我们
-
-如果您有任何问题或建议，请通过以下方式联系我们：
-
-- 提交 Issue
-- 发起 Discussion
-- 发送邮件
+- 感谢所有开源项目的贡献者
+- 特别感谢Vue.js、D3.js和Flask社区
 
 ---
 
-**让我们一起用美丽的可视化来纪念每一次代码提交！** 🎉
+**让您的Git历史变得生动有趣！** 🌟
